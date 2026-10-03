@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Χρήστες</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/admin}" class="nav-item"><span>📊</span> Dashboard</a>
+            <a th:href="@{/admin/tickets}" class="nav-item"><span>🎫</span> Όλα τα Tickets</a>
+            <a th:href="@{/admin/users}" class="nav-item active"><span>👥</span> Χρήστες</a>
+            <div class="nav-divider"></div>
+            <a th:href="@{/tickets}" class="nav-item"><span>👤</span> My Tickets</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span>Admin</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Χρήστες</h1>
+        </div>
+        <div class="card">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Username</th>
+                    <th>Ονοματεπώνυμο</th>
+                    <th>Email</th>
+                    <th>Τμήμα</th>
+                    <th>Role</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.username}"></td>
+                    <td th:text="${user.fullName ?: '-'}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.department ?: '-'}"></td>
+                    <td>
+                        <span class="badge" th:text="${user.role}"
+                              th:classappend="${user.role.name() == 'ADMIN'} ? 'badge-admin-role' : 'badge-user-role'">
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>

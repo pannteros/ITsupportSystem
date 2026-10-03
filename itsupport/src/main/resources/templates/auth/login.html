@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>IT Support — Σύνδεση</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body class="auth-page">
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <span class="logo-icon">🖥</span>
+            <h1>IT Support</h1>
+            <p>Ticket Management System</p>
+        </div>
+
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <form th:action="@{/auth/login}" method="post" class="auth-form">
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Εισάγετε username" required class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label>Κωδικός</label>
+                <input type="password" name="password" placeholder="Εισάγετε κωδικό" required class="form-control"/>
+            </div>
+            <button type="submit" class="btn-primary btn-full">Σύνδεση</button>
+        </form>
+
+        <p class="auth-switch">
+            Δεν έχετε λογαριασμό; <a th:href="@{/auth/register}">Εγγραφείτε</a>
+        </p>
+
+        <div class="demo-accounts">
+            <p><strong>Demo:</strong> admin / admin123 &nbsp;|&nbsp; user / user123</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Όλα τα Tickets</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/admin}" class="nav-item"><span>📊</span> Dashboard</a>
+            <a th:href="@{/admin/tickets}" class="nav-item active"><span>🎫</span> Όλα τα Tickets</a>
+            <a th:href="@{/admin/users}" class="nav-item"><span>👥</span> Χρήστες</a>
+            <div class="nav-divider"></div>
+            <a th:href="@{/tickets}" class="nav-item"><span>👤</span> My Tickets</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span>Admin</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Όλα τα Tickets</h1>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <!-- Filter by status -->
+        <div class="filter-bar">
+            <a th:href="@{/admin/tickets}" class="filter-btn" th:classappend="${selectedStatus == null} ? 'active' : ''">Όλα</a>
+            <a th:each="s : ${statuses}"
+               th:href="@{/admin/tickets(status=${s.name()})}"
+               th:text="${s}"
+               class="filter-btn"
+               th:classappend="${selectedStatus == s.name()} ? 'active' : ''">Status</a>
+        </div>
+
+        <div class="card">
+            <table class="table" th:if="${!tickets.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Τίτλος</th>
+                    <th>Χρήστης</th>
+                    <th>Κατηγορία</th>
+                    <th>Προτεραιότητα</th>
+                    <th>Status</th>
+                    <th>Ημ/νία</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.id}"></td>
+                    <td th:text="${ticket.title}"></td>
+                    <td th:text="${ticket.createdBy.username}"></td>
+                    <td><span class="badge category" th:text="${ticket.category}"></span></td>
+                    <td><span class="badge" th:text="${ticket.priority}"
+                              th:classappend="'priority-' + ${ticket.priority.name().toLowerCase()}"></span></td>
+                    <td><span class="badge status" th:text="${ticket.status}"
+                              th:classappend="'status-' + ${ticket.status.name().toLowerCase().replace('_','-')}"></span></td>
+                    <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy')}"></td>
+                    <td><a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="btn-sm">Προβολή</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${tickets.isEmpty()}" class="empty-state">
+                <p>Δεν υπάρχουν tickets.</p>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

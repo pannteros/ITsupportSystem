@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Ticket Detail</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/admin}" class="nav-item"><span>📊</span> Dashboard</a>
+            <a th:href="@{/admin/tickets}" class="nav-item active"><span>🎫</span> Όλα τα Tickets</a>
+            <a th:href="@{/admin/users}" class="nav-item"><span>👥</span> Χρήστες</a>
+            <div class="nav-divider"></div>
+            <a th:href="@{/tickets}" class="nav-item"><span>👤</span> My Tickets</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span>Admin</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Ticket #<span th:text="${ticket.id}"></span></h1>
+            <a th:href="@{/admin/tickets}" class="btn-secondary">← Πίσω</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="ticket-admin-grid">
+            <!-- Ticket Info -->
+            <div class="card ticket-detail-card">
+                <div class="ticket-detail-header">
+                    <h2 th:text="${ticket.title}"></h2>
+                    <span class="badge status" th:text="${ticket.status}"
+                          th:classappend="'status-' + ${ticket.status.name().toLowerCase().replace('_','-')}"></span>
+                </div>
+                <div class="ticket-meta">
+                    <span class="badge category" th:text="${ticket.category}"></span>
+                    <span class="badge" th:text="${ticket.priority}"
+                          th:classappend="'priority-' + ${ticket.priority.name().toLowerCase()}"></span>
+                    <span class="meta-info">Από: <strong th:text="${ticket.createdBy.fullName ?: ticket.createdBy.username}"></strong></span>
+                    <span class="meta-info">Τμήμα: <strong th:text="${ticket.createdBy.department ?: '-'}"></strong></span>
+                    <span class="meta-info">Ημ/νία: <strong th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></strong></span>
+                    <span class="meta-info" th:if="${ticket.assignedTo != null}">
+                        Ανατέθηκε: <strong th:text="${ticket.assignedTo.username}"></strong>
+                    </span>
+                </div>
+                <div class="ticket-description">
+                    <p th:text="${ticket.description}"></p>
+                </div>
+
+                <!-- Admin Actions -->
+                <div class="admin-actions">
+                    <form th:action="@{/admin/tickets/{id}/status(id=${ticket.id})}" method="post" class="inline-form">
+                        <select name="status" class="form-control-sm">
+                            <option th:each="s : ${statuses}"
+                                    th:value="${s}"
+                                    th:text="${s}"
+                                    th:selected="${ticket.status == s}">
+                            </option>
+                        </select>
+                        <button type="submit" class="btn-primary btn-sm">Αλλαγή Status</button>
+                    </form>
+
+                    <form th:if="${ticket.assignedTo == null}"
+                          th:action="@{/admin/tickets/{id}/assign(id=${ticket.id})}" method="post">
+                        <button type="submit" class="btn-secondary">Ανάληψη Ticket</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Comments -->
+            <div class="card">
+                <h3>Συνομιλία</h3>
+                <div class="comments-thread">
+                    <div th:each="comment : ${comments}" class="comment"
+                         th:classappend="${comment.author.role.name() == 'ADMIN'} ? 'comment-admin' : 'comment-user'">
+                        <div class="comment-header">
+                            <span class="comment-author">
+                                <span th:if="${comment.author.role.name() == 'ADMIN'}" class="badge-admin">IT Staff</span>
+                                <span th:text="${comment.author.fullName ?: comment.author.username}"></span>
+                            </span>
+                            <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                        </div>
+                        <div class="comment-body" th:text="${comment.content}"></div>
+                    </div>
+                    <div th:if="${comments.isEmpty()}" class="no-comments">Δεν υπάρχουν σχόλια ακόμα.</div>
+                </div>
+
+                <div class="comment-form">
+                    <form th:action="@{/admin/tickets/{id}/comment(id=${ticket.id})}" method="post">
+                        <div class="form-group">
+                            <label>Απάντηση ως IT Staff</label>
+                            <textarea name="content" rows="3" required class="form-control"
+                                      placeholder="Γράψτε την απάντησή σας..."></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary">Αποστολή</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

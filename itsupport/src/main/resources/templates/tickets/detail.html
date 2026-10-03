@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Ticket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/tickets}" class="nav-item active"><span>🎫</span> Τα Tickets μου</a>
+            <a th:href="@{/tickets/new}" class="nav-item"><span>➕</span> Νέο Ticket</a>
+            <sec:authorize access="hasRole('ADMIN')">
+                <div class="nav-divider"></div>
+                <a th:href="@{/admin}" class="nav-item"><span>⚙️</span> Admin Panel</a>
+            </sec:authorize>
+        </nav>
+        <div class="sidebar-footer">
+            <span sec:authentication="name">User</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Ticket #<span th:text="${ticket.id}"></span></h1>
+            <a th:href="@{/tickets}" class="btn-secondary">← Πίσω</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <!-- Ticket Info -->
+        <div class="card ticket-detail-card">
+            <div class="ticket-detail-header">
+                <h2 th:text="${ticket.title}"></h2>
+                <span class="badge status"
+                      th:text="${ticket.status}"
+                      th:classappend="'status-' + ${ticket.status.name().toLowerCase().replace('_','-')}">
+                </span>
+            </div>
+            <div class="ticket-meta">
+                <span class="badge category" th:text="${ticket.category}"></span>
+                <span class="badge" th:text="${ticket.priority}"
+                      th:classappend="'priority-' + ${ticket.priority.name().toLowerCase()}"></span>
+                <span class="meta-info">Δημιουργήθηκε: <strong th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}"></strong></span>
+                <span class="meta-info">Από: <strong th:text="${ticket.createdBy.fullName ?: ticket.createdBy.username}"></strong></span>
+            </div>
+            <div class="ticket-description">
+                <p th:text="${ticket.description}"></p>
+            </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="card">
+            <h3>Συνομιλία</h3>
+
+            <div class="comments-thread">
+                <div th:each="comment : ${comments}" class="comment"
+                     th:classappend="${comment.author.role.name() == 'ADMIN'} ? 'comment-admin' : 'comment-user'">
+                    <div class="comment-header">
+                        <span class="comment-author">
+                            <span th:if="${comment.author.role.name() == 'ADMIN'}" class="badge-admin">IT Staff</span>
+                            <span th:text="${comment.author.fullName ?: comment.author.username}"></span>
+                        </span>
+                        <span class="comment-date" th:text="${#temporals.format(comment.createdAt, 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                    <div class="comment-body" th:text="${comment.content}"></div>
+                </div>
+
+                <div th:if="${comments.isEmpty()}" class="no-comments">
+                    Δεν υπάρχουν σχόλια ακόμα.
+                </div>
+            </div>
+
+            <!-- Add Comment Form -->
+            <div th:if="${ticket.status.name() != 'CLOSED'}" class="comment-form">
+                <form th:action="@{/tickets/{id}/comment(id=${ticket.id})}" method="post">
+                    <div class="form-group">
+                        <label>Προσθήκη σχολίου</label>
+                        <textarea name="content" rows="3" required class="form-control"
+                                  placeholder="Γράψτε το μήνυμά σας..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary">Αποστολή</button>
+                </form>
+            </div>
+            <div th:if="${ticket.status.name() == 'CLOSED'}" class="closed-notice">
+                ⛔ Αυτό το ticket είναι κλειστό.
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

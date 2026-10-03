@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/admin}" class="nav-item active"><span>📊</span> Dashboard</a>
+            <a th:href="@{/admin/tickets}" class="nav-item"><span>🎫</span> Όλα τα Tickets</a>
+            <a th:href="@{/admin/users}" class="nav-item"><span>👥</span> Χρήστες</a>
+            <div class="nav-divider"></div>
+            <a th:href="@{/tickets}" class="nav-item"><span>👤</span> My Tickets</a>
+        </nav>
+        <div class="sidebar-footer">
+            <span>Admin</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Dashboard</h1>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" th:text="${totalTickets}">0</div>
+                <div class="stat-label">Σύνολο Tickets</div>
+            </div>
+            <div class="stat-card open">
+                <div class="stat-number" th:text="${openTickets}">0</div>
+                <div class="stat-label">Ανοιχτά</div>
+            </div>
+            <div class="stat-card in-progress">
+                <div class="stat-number" th:text="${inProgressTickets}">0</div>
+                <div class="stat-label">Σε Εξέλιξη</div>
+            </div>
+            <div class="stat-card resolved">
+                <div class="stat-number" th:text="${resolvedTickets}">0</div>
+                <div class="stat-label">Επιλυμένα</div>
+            </div>
+            <div class="stat-card closed">
+                <div class="stat-number" th:text="${closedTickets}">0</div>
+                <div class="stat-label">Κλειστά</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Πρόσφατα Tickets</h3>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Τίτλος</th>
+                    <th>Χρήστης</th>
+                    <th>Προτεραιότητα</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket : ${recentTickets}">
+                    <td th:text="${ticket.id}"></td>
+                    <td th:text="${ticket.title}"></td>
+                    <td th:text="${ticket.createdBy.username}"></td>
+                    <td><span class="badge" th:text="${ticket.priority}"
+                              th:classappend="'priority-' + ${ticket.priority.name().toLowerCase()}"></span></td>
+                    <td><span class="badge status" th:text="${ticket.status}"
+                              th:classappend="'status-' + ${ticket.status.name().toLowerCase().replace('_','-')}"></span></td>
+                    <td><a th:href="@{/admin/tickets/{id}(id=${ticket.id})}" class="btn-sm">Προβολή</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+</body>
+</html>

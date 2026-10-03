@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Νέο Ticket</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+    <aside class="sidebar">
+        <div class="sidebar-logo"><span>🖥</span><span>IT Support</span></div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/tickets}" class="nav-item"><span>🎫</span> Τα Tickets μου</a>
+            <a th:href="@{/tickets/new}" class="nav-item active"><span>➕</span> Νέο Ticket</a>
+            <sec:authorize access="hasRole('ADMIN')">
+                <div class="nav-divider"></div>
+                <a th:href="@{/admin}" class="nav-item"><span>⚙️</span> Admin Panel</a>
+            </sec:authorize>
+        </nav>
+        <div class="sidebar-footer">
+            <span sec:authentication="name">User</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="main-header">
+            <h1>Νέο Ticket</h1>
+            <a th:href="@{/tickets}" class="btn-secondary">← Πίσω</a>
+        </div>
+
+        <div class="card">
+            <form th:action="@{/tickets/new}" method="post" class="ticket-form">
+                <div class="form-group">
+                    <label>Τίτλος *</label>
+                    <input type="text" name="title" placeholder="Σύντομη περιγραφή του προβλήματος"
+                           required class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label>Περιγραφή *</label>
+                    <textarea name="description" rows="5" required class="form-control"
+                              placeholder="Περιγράψτε αναλυτικά το πρόβλημά σας..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Κατηγορία *</label>
+                        <select name="category" required class="form-control">
+                            <option value="">-- Επιλέξτε --</option>
+                            <option value="NETWORK">🌐 Network</option>
+                            <option value="HARDWARE">🖥️ Hardware</option>
+                            <option value="SOFTWARE">💿 Software</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Προτεραιότητα *</label>
+                        <select name="priority" required class="form-control">
+                            <option value="LOW">🟢 Low</option>
+                            <option value="MEDIUM">🟡 Medium</option>
+                            <option value="HIGH">🔴 High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Υποβολή Ticket</button>
+                    <a th:href="@{/tickets}" class="btn-secondary">Ακύρωση</a>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+</body>
+</html>

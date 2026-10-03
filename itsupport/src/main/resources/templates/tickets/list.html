@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="el" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>IT Support — Τα Tickets μου</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <span>🖥</span>
+            <span>IT Support</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a th:href="@{/tickets}" class="nav-item active">
+                <span>🎫</span> Τα Tickets μου
+            </a>
+            <a th:href="@{/tickets/new}" class="nav-item">
+                <span>➕</span> Νέο Ticket
+            </a>
+            <sec:authorize access="hasRole('ADMIN')">
+                <div class="nav-divider"></div>
+                <a th:href="@{/admin}" class="nav-item">
+                    <span>⚙️</span> Admin Panel
+                </a>
+            </sec:authorize>
+        </nav>
+        <div class="sidebar-footer">
+            <span sec:authentication="name">User</span>
+            <a th:href="@{/auth/logout}" class="logout-link">Αποσύνδεση</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="main-header">
+            <h1>Τα Tickets μου</h1>
+            <a th:href="@{/tickets/new}" class="btn-primary">+ Νέο Ticket</a>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-badge open">
+                <span th:text="${openCount}">0</span> Ανοιχτά
+            </div>
+            <div class="stat-badge in-progress">
+                <span th:text="${inProgressCount}">0</span> Σε εξέλιξη
+            </div>
+            <div class="stat-badge resolved">
+                <span th:text="${resolvedCount}">0</span> Επιλυμένα
+            </div>
+        </div>
+
+        <!-- Tickets Table -->
+        <div class="card">
+            <table class="table" th:if="${!tickets.isEmpty()}">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Τίτλος</th>
+                    <th>Κατηγορία</th>
+                    <th>Προτεραιότητα</th>
+                    <th>Status</th>
+                    <th>Ημ/νία</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket : ${tickets}">
+                    <td th:text="${ticket.id}"></td>
+                    <td th:text="${ticket.title}"></td>
+                    <td><span class="badge category" th:text="${ticket.category}"></span></td>
+                    <td>
+                        <span class="badge"
+                              th:text="${ticket.priority}"
+                              th:classappend="'priority-' + ${ticket.priority.name().toLowerCase()}">
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge status"
+                              th:text="${ticket.status}"
+                              th:classappend="'status-' + ${ticket.status.name().toLowerCase().replace('_','-')}">
+                        </span>
+                    </td>
+                    <td th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn-sm">Προβολή</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${tickets.isEmpty()}" class="empty-state">
+                <p>Δεν έχετε ανοίξει κάποιο ticket ακόμα.</p>
+                <a th:href="@{/tickets/new}" class="btn-primary">Ανοίξτε το πρώτο σας ticket</a>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>
