@@ -1,14 +1,12 @@
 # IT Support — Ticket Management System
 
-> **Personal Project | IT Junior Network & Security Technician**
-
 ---
 
 ## Περιγραφή | Description
 
-**GR:** Ένα σύστημα διαχείρισης αιτημάτων τεχνικής υποστήριξης με σύστημα εγγραφής/σύνδεσης χρηστών, δημιουργία tickets και επικοινωνία μεταξύ χρηστών και IT Staff μέσω comments.
+**GR:** Ένα σύστημα διαχείρισης αιτημάτων τεχνικής υποστήριξης με σύστημα εγγραφής/σύνδεσης χρηστών, δημιουργία tickets και επικοινωνία μεταξύ χρηστών και IT Staff .
 
-**EN:** A helpdesk ticket management system with user authentication, ticket creation and communication between users and IT Staff through comments.
+**EN:** A helpdesk ticket management system with user authentication, ticket creation and communication between users and IT Staff .
 
 ---
 
